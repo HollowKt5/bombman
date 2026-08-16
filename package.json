@@ -6,7 +6,7 @@
   "description": "泡泡小英雄 - Q版泡泡堂复刻 v1（P0-P2 核心原型：移动/放泡/爆炸/道具/AI/关卡）",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && cp dist/src/index.html dist/index.html && rm -rf dist/src",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

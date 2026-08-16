@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>泡泡小英雄 · BombMan v1</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- 对局 HUD（DOM 覆盖层） -->
+      <div id="hud" class="hidden">
+        <div class="hud-left">
+          <button id="btn-pause-hud" class="hud-pause" title="暂停">⏸</button>
+          <span class="hud-item">关卡 <b id="hud-level">1</b></span>
+          <span class="hud-item">⏱ <b id="hud-time">--:--</b></span>
+          <span class="hud-item">💣 <b id="hud-bombs">1/1</b></span>
+          <span class="hud-item">威力 <b id="hud-range">1</b></span>
+          <span class="hud-item">速度 <b id="hud-speed">3.0</b></span>
+          <span class="hud-item" id="hud-buffs"></span>
+        </div>
+        <div class="hud-right">
+          <span class="hud-item" id="hud-hp"></span>
+          <span class="hud-item">敌人 <b id="hud-enemies">0</b></span>
+          <span class="hud-item">得分 <b id="hud-score">0</b></span>
+        </div>
+      </div>
+
+      <!-- 主菜单 -->
+      <div id="menu" class="overlay">
+        <div class="panel">
+          <h1 class="title">🫧 泡泡小英雄 🫧</h1>
+          <p class="subtitle">Q 版泡泡堂复刻 · v1 核心原型</p>
+          <div class="row">
+            <span class="label">难度</span>
+            <label><input type="radio" name="diff" value="0" checked /> 简单</label>
+            <label><input type="radio" name="diff" value="1" /> 一般</label>
+            <label><input type="radio" name="diff" value="2" /> 困难</label>
+          </div>
+          <button id="btn-start" class="btn big">🎮 开始游戏</button>
+          <p class="hiscore">最高分：<b id="menu-hiscore">0</b></p>
+          <p class="help">方向键 / WASD 移动 · 空格 放泡 · 推泡需 🧤 手套 · Esc 暂停</p>
+        </div>
+      </div>
+
+      <!-- 暂停菜单（含操作/目标说明，点击任意处关闭） -->
+      <div id="pause" class="overlay hidden">
+        <div class="panel small">
+          <h2>⏸ 暂停</h2>
+          <div class="help-box">
+            <p>🎯 <b>目标：</b>炸掉所有敌人即可通关，小心别被自己的泡泡炸到！</p>
+            <p>🎮 <b>操作：</b>方向键 / WASD 移动 · 空格 放泡 · Esc 暂停</p>
+            <p>💡 <b>提示：</b>炸开软墙拿道具（💣炸弹 / 🧪爆炸药 / 👟疾跑鞋 / 🧤手套 / ❤️心 / 🦖坐骑）</p>
+            <p class="dim">（点击任意处关闭说明）</p>
+          </div>
+          <button id="btn-resume" class="btn">继续游戏</button>
+          <button id="btn-restart" class="btn">重开本关</button>
+          <button id="btn-pause-menu" class="btn">返回主菜单</button>
+        </div>
+      </div>
+
+      <!-- 结算界面 -->
+      <div id="result" class="overlay hidden">
+        <div class="panel">
+          <h2 id="result-title">第 1 关 完成！</h2>
+          <div id="result-stars" class="stars"></div>
+          <div class="score-grid">
+            <div class="score-cell">爆破分 <b id="r-blocks">0</b></div>
+            <div class="score-cell">击杀分 <b id="r-kills">0</b></div>
+            <div class="score-cell">道具分 <b id="r-pups">0</b></div>
+            <div class="score-cell">时间分 <b id="r-time">0</b></div>
+          </div>
+          <div class="total">总分 <b id="r-total">0</b></div>
+          <div class="row">
+            <button id="btn-next" class="btn">下一关 ▶</button>
+            <button id="btn-retry" class="btn">重玩</button>
+            <button id="btn-result-menu" class="btn">主菜单</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 触屏控制（手机模式：虚拟摇杆 + 放泡键） -->
+      <div id="touch-controls">
+        <div id="joystick">
+          <div id="joystick-base"></div>
+          <div id="joystick-knob"></div>
+        </div>
+        <button id="tbtn-bomb" class="bomb-btn">💣</button>
+      </div>
+
+      <!-- 竖屏旋转提示（触屏设备竖屏时显示） -->
+      <div id="rotate-hint">
+        <div class="rotate-icon">📱</div>
+        <p>请旋转设备至横屏游玩</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
