@@ -1,0 +1,449 @@
+/* ===== 泡泡小英雄 v1 · 全局样式（Q 版圆润风 → v1.5.9 像素化 UI 方向） ===== */
+:root {
+  --btn-main: #4caf50;
+  --btn-blue: #2196f3;
+  --btn-orange: #ff5722;
+  --ink: #ffffff;
+  /* v1.5.9 像素风：深色硬边面板 / 等宽数字 */
+  --px-border: #2c3346;
+  --px-panel: rgba(16, 20, 32, 0.92);
+  --px-text: #f0f0ea;
+  --px-dim: #98a2b4;
+  --px-font: "Courier New", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "WenQuanYi Micro Hei", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "WenQuanYi Micro Hei", "Segoe UI", system-ui, sans-serif;
+  background: #1c2333;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* v1.5.7 移动端禁用双击放大：交互元素显式 manipulation（双击缩放被浏览器关闭） */
+button,
+input,
+label,
+a,
+.btn,
+.bomb-btn {
+  touch-action: manipulation;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#game-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---- HUD ---- */
+#hud {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 14px;
+  border-radius: 4px; /* v1.5.9 硬角像素风 */
+  background: var(--px-panel);
+  border: 2px solid var(--px-border);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+  font-family: var(--px-font);
+  color: var(--px-text);
+  z-index: 20;
+  white-space: nowrap;
+  max-width: calc(100vw - 16px);
+}
+.hud-left,
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hud-item {
+  color: var(--px-dim);
+}
+.hud-item b {
+  color: #ff8a50;
+}
+#hud-hp {
+  letter-spacing: 0;
+  display: inline-flex;
+  align-items: center;
+}
+/* HUD 暂停按钮（像素方块） */
+.hud-pause {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #20242f;
+  border-radius: 4px;
+  background: #ff5722;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  line-height: 1;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+}
+.hud-pause:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* 手机版 HUD：整体一个矩形，放在地图左侧（地图高度撑满时两侧有留白）。
+   定位 = 地图左边缘（15:13 高度撑满时 = (100vw - 100vh×15/13)/2，否则为负 → max 兜底贴左）。
+   v1.5.10：盒子进一步收窄往左贴，小屏（如 SE 横屏留白 ~110px）也不与地图重合。 */
+body.is-touch #hud {
+  top: 10px;
+  left: max(8px, calc((100vw - calc(100vh * 1.154)) / 2));
+  transform: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 3px;
+  padding: 6px 7px;
+  max-width: 118px;
+  white-space: normal;
+  font-size: 10px;
+}
+body.is-touch .hud-left,
+body.is-touch .hud-right {
+  flex-wrap: wrap;
+  gap: 2px 8px;
+}
+body.is-touch .hud-item {
+  font-size: 10px;
+}
+body.is-touch #hud-hp svg {
+  width: 10px;
+  height: auto;
+}
+
+/* 暂停弹层：操作/目标说明 */
+.help-box {
+  margin: 4px 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  text-align: left;
+  font-size: 13.5px;
+  color: #4e342e;
+  line-height: 1.7;
+}
+.help-box b {
+  color: #e65100;
+}
+.help-box .dim {
+  color: #a1887f;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ---- 覆盖层 / 面板 ---- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 26, 40, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 30;
+}
+
+.panel {
+  width: min(460px, calc(100vw - 40px));
+  background: linear-gradient(180deg, #fffdf4, #ffe9c9);
+  border-radius: 8px; /* v1.5.9 硬角像素风 */
+  border: 3px solid var(--px-border);
+  padding: 26px 28px 22px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.32), 0 14px 40px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  animation: pop 0.25s ease-out;
+}
+.panel.small {
+  width: min(320px, calc(100vw - 40px));
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.title {
+  font-size: 34px;
+  color: #ff5722;
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(0, 0, 0, 0.25); /* v1.5.9 像素硬阴影 */
+  margin-bottom: 4px;
+}
+.subtitle {
+  color: #8d6e63;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+.panel h2 {
+  color: #e65100;
+  margin-bottom: 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 14px 0;
+  font-size: 15px;
+  color: #4e342e;
+}
+.row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px; /* v1.5.9 硬角 */
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
+}
+.row label:has(input:checked) {
+  background: #ffe0b2;
+  border-color: #e65100;
+  font-weight: 700;
+}
+
+/* ---- 按钮（v1.5.9 硬角像素方块） ---- */
+.btn {
+  display: inline-block;
+  min-width: 120px;
+  margin: 6px;
+  padding: 12px 22px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--btn-main), #388e3c);
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 #2e7d32, 0 6px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #2e7d32;
+}
+.btn.big {
+  min-width: 220px;
+  font-size: 20px;
+  padding: 14px 26px;
+  background: linear-gradient(180deg, var(--btn-orange), #e64a19);
+  box-shadow: 0 5px 0 #bf360c, 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+.btn.big:active {
+  box-shadow: 0 1px 0 #bf360c;
+}
+#btn-resume {
+  background: linear-gradient(180deg, var(--btn-blue), #1976d2);
+  box-shadow: 0 4px 0 #0d47a1;
+}
+#btn-resume:active {
+  box-shadow: 0 1px 0 #0d47a1;
+}
+
+.hiscore {
+  margin-top: 12px;
+  color: #bf360c;
+  font-weight: 700;
+}
+.help {
+  margin-top: 8px;
+  color: #8d6e63;
+  font-size: 12.5px;
+}
+
+/* ---- 结算 ---- */
+.stars {
+  font-size: 34px;
+  letter-spacing: 6px;
+  color: #ffb300;
+  margin: 6px 0 12px;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+.score-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.score-cell {
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 12px;
+  padding: 8px;
+  color: #6d4c41;
+  font-size: 14px;
+}
+.score-cell b {
+  color: #e65100;
+  font-size: 18px;
+}
+.total {
+  font-size: 20px;
+  font-weight: 800;
+  color: #4e342e;
+  margin-bottom: 10px;
+}
+.total b {
+  color: #ff5722;
+  font-size: 26px;
+}
+
+/* ---- 触屏控制（手机模式） ---- */
+/* 默认隐藏；body.is-touch（JS 识别到触屏设备）时显示 */
+#touch-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+  display: none;
+}
+body.is-touch #touch-controls {
+  display: block;
+}
+/* 桌面宽屏 + 精细指针（键鼠）：即使触屏设备也不显示，避免误触 */
+@media (min-width: 1024px) and (pointer: fine) {
+  body.is-touch #touch-controls {
+    display: none;
+  }
+}
+
+/* 虚拟摇杆（左下角） */
+#joystick {
+  position: absolute;
+  left: 26px;
+  bottom: 26px;
+  width: 132px;
+  height: 132px;
+  pointer-events: auto;
+  touch-action: none;
+}
+#joystick-base {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.18);
+}
+#joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.35));
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  pointer-events: none; /* 事件由基座接管 */
+}
+
+.bomb-btn {
+  position: absolute;
+  right: 26px;
+  bottom: 30px;
+  width: 88px;
+  height: 88px;
+  border: 3px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px; /* v1.5.9 像素方块 */
+  font-size: 42px;
+  background: rgba(255, 87, 34, 0.6);
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+  touch-action: none;
+}
+.bomb-btn:active {
+  background: rgba(255, 87, 34, 0.85);
+}
+
+/* ---- 竖屏旋转提示（触屏设备竖屏时遮罩） ---- */
+#rotate-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #1c2333;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+}
+.rotate-icon {
+  font-size: 60px;
+  animation: rotate-hint 1.8s ease-in-out infinite;
+}
+@keyframes rotate-hint {
+  0% {
+    transform: rotate(0deg);
+  }
+  55% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}
+@media (orientation: portrait) and (pointer: coarse) {
+  #rotate-hint {
+    display: flex;
+  }
+}
+
+/* 小屏 HUD 紧凑化 */
+@media (max-width: 700px) {
+  #hud {
+    font-size: 12px;
+    padding: 5px 10px;
+    gap: 8px;
+  }
+  .hud-left,
+  .hud-right {
+    gap: 8px;
+  }
+}

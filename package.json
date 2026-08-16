@@ -1,0 +1,21 @@
+{
+  "name": "bubble-hero",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "泡泡小英雄 - Q版泡泡堂复刻 v1（P0-P2 核心原型：移动/放泡/爆炸/道具/AI/关卡）",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.4.8",
+    "vite-plugin-singlefile": "^2.0.3",
+    "vitest": "^1.6.0"
+  }
+}
