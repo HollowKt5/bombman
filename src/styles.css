@@ -115,12 +115,10 @@ a,
   box-shadow: none;
 }
 
-/* 手机版 HUD：整体一个矩形，放在地图左侧（地图高度撑满时两侧有留白）。
-   定位 = 地图左边缘（15:13 高度撑满时 = (100vw - 100vh×15/13)/2，否则为负 → max 兜底贴左）。
-   v1.5.10：盒子进一步收窄往左贴，小屏（如 SE 横屏留白 ~110px）也不与地图重合。 */
+/* 手机版 HUD：整体一个矩形，固定在**屏幕最左侧**（v1.5.11：不再跟地图留白，直接贴左缘）。 */
 body.is-touch #hud {
   top: 10px;
-  left: max(8px, calc((100vw - calc(100vh * 1.154)) / 2));
+  left: 8px;
   transform: none;
   flex-direction: column;
   align-items: flex-start;
