@@ -7,6 +7,13 @@
 
 ## 已实现
 
+### 2026-08-16 · v1.5.10 手机 HUD 再往左贴 + 上线 GitHub Pages（本轮）
+
+| 需求 | 实施 | 状态 |
+|---|---|---|
+| 手机端 UI 还是和地图左侧重合，把它往左放 | `body.is-touch #hud` 定位简化为 `left: max(8px, calc((100vw - 100vh×15/13) / 2))`（去掉可能解析失败的 `min()` 嵌套），盒子收窄：max-width 172→118px、字号 12→10px、红心 10px、间距收紧——小屏（SE 横屏留白 ~110px）也不压地图 | ✅ |
+| 传到 GitHub 生成 Web 链接 | 建公开仓库 `HollowKt5/bombman`，本地 `git init` + `.gitignore`（node_modules/dist）+ 复制 `dist/index.html → index.html` + 提交推送，开启 GitHub Pages（main/root）：**https://hollowkt5.github.io/bombman/**（已验证 HTTP 200） | ✅ |
+
 ### 2026-08-16 · v1.5.9 手机版 UI 收进左侧矩形 + 像素红心 + 整体像素风（本轮）
 
 | 需求 | 实施 | 状态 |
