@@ -120,7 +120,7 @@ a,
    留白不足时 min-width 兜底（与摇杆同为贴边控件）。v1.5.12（未发布） */
 body.is-touch #hud {
   top: 10px;
-  left: -100px; /* 与 #joystick 最左侧对齐 */
+  left: -40px; /* 与 #joystick 最左侧对齐 */
   width: calc((100vw - calc(100vh * 1.154)) / 2 - 36px); /* 地图之外：宽度 = 左留白 - 左右留边 */
   min-width: 84px;
   max-width: 128px;
